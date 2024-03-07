@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {SyntheticEvent, useEffect, useState} from "react";
 import {IEmployee} from "../Types";
 import {Navigate, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
@@ -6,11 +6,29 @@ import axios from "axios";
 const EmployeeDetail = (props: { token: string }) => {
     const [data, setData] = useState<IEmployee>();
     const navigate = useNavigate()
+    const [redirect, setRedirect] = useState(false)
 
     const params = useParams()
 
     if (props.token === '') {
         return <Navigate to="/login" />
+    }
+
+    const deleteEmployee = async (e: SyntheticEvent) => {
+        e.preventDefault()
+
+         await fetch('http://localhost:8001/employee/'+ params.id, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + props.token
+            }
+        })
+
+        setRedirect(true)
+    }
+
+    if (redirect) {
+        return <Navigate to="/" />
     }
 
     const fetchData = async () => {
@@ -35,9 +53,7 @@ const EmployeeDetail = (props: { token: string }) => {
                         <div className="card-header">
                             <h3>
                                 <div className="action-menu">
-                                    <button type="button" className="btn btn-warning float-end" onClick={() => {
-                                        navigate('/employee/update/' + data?.id)
-                                    }}>Delete
+                                    <button type="button" className="btn btn-warning float-end" onClick={deleteEmployee}>Delete
                                     </button>
                                     <button type="button" className="btn btn-primary float-end" onClick={() => {
                                         navigate('/employee/update/' + data?.id)

@@ -1,9 +1,11 @@
 import React, {SyntheticEvent, useState} from "react";
 import {Navigate} from "react-router-dom";
+import {useCookies} from "react-cookie";
 
-const Login = (props: {token: string, setToken: (token: string) => void }) => {
+const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [cookies, setCookies] = useCookies(['token']);
 
     const submit = async(e: SyntheticEvent) => {
         e.preventDefault();
@@ -21,10 +23,12 @@ const Login = (props: {token: string, setToken: (token: string) => void }) => {
 
         const content = await response.json()
 
-        props.setToken(content.token)
+        localStorage.setItem("token",content.token)
+
+        console.log(localStorage.getItem("token"))
     }
 
-    if (props.token !== '') {
+    if (cookies != null) {
         return <Navigate to="/"/>;
     } else {
         return (

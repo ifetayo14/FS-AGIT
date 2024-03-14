@@ -1,7 +1,8 @@
 import React, {SyntheticEvent, useState} from "react";
 import {Navigate} from "react-router-dom";
+import {useCookies} from "react-cookie";
 
-const EmployeeCreate = (props: { token: string}) => {
+const EmployeeCreate = () => {
     const [name, setName] = useState('')
     const [nip, setNip] = useState('')
     const [pob, setPob] = useState('')
@@ -13,8 +14,9 @@ const EmployeeCreate = (props: { token: string}) => {
     const [phoneNumber, setPhoneNumber] = useState(0)
     const [email, setEmail] = useState('')
     const [redirect, setRedirect] = useState(false)
+    const [cookies] = useCookies(['token']);
 
-    if (props.token === '') {
+    if (cookies === null) {
         return <Navigate to="/login" />
     }
 
@@ -25,7 +27,7 @@ const EmployeeCreate = (props: { token: string}) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+ props.token
+                'Authorization': 'Bearer '+ cookies
             },
             body: JSON.stringify({
                 'name': name,

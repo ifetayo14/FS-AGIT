@@ -1,14 +1,19 @@
 import React from "react";
 import {Link} from "react-router-dom";
+import {useCookies} from "react-cookie";
 
-const Nav = (props: { token: string, setToken: (token:string) => void}) => {
+const Nav = () => {
+    const [cookies, removeCookie] = useCookies(['token']);
     const logout = () => {
-        props.setToken("")
+        removeCookie('token', {
+            path: '/login',
+            domain: 'http://localhost:3000/'
+        })
     }
 
     let menu;
 
-    if (props.token === '') {
+    if (!cookies) {
         menu = (
             <ul className="navbar-nav me-auto mb-2 mb-md-0">
                 <li className="nav-item active">

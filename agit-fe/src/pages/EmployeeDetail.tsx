@@ -2,15 +2,17 @@ import React, {SyntheticEvent, useEffect, useState} from "react";
 import {IEmployee} from "../Types";
 import {Navigate, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
+import {useCookies} from "react-cookie";
 
-const EmployeeDetail = (props: { token: string }) => {
+const EmployeeDetail = () => {
     const [data, setData] = useState<IEmployee>();
     const navigate = useNavigate()
     const [redirect, setRedirect] = useState(false)
+    const [cookies] = useCookies(['token']);
 
     const params = useParams()
 
-    if (props.token === '') {
+    if (cookies === null) {
         return <Navigate to="/login" />
     }
 
@@ -20,7 +22,7 @@ const EmployeeDetail = (props: { token: string }) => {
          await fetch('http://localhost:8001/employee/'+ params.id, {
             method: 'DELETE',
             headers: {
-                'Authorization': 'Bearer ' + props.token
+                'Authorization': 'Bearer ' + cookies
             }
         })
 
@@ -34,7 +36,7 @@ const EmployeeDetail = (props: { token: string }) => {
     const fetchData = async () => {
         const response = await axios.get(`http://localhost:8001/employee/`+params.id, {
             headers: {
-                Authorization: 'Bearer ' + props.token
+                Authorization: 'Bearer ' + cookies
             }
         })
         setData(response.data)

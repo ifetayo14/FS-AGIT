@@ -3,18 +3,18 @@ import {Navigate, useNavigate} from "react-router-dom";
 import axios from "axios";
 import {IEmployee} from "../Types";
 
-const Employee = (props: { token: string}) => {
+const Employee = () => {
     const [data, setData] = useState<IEmployee[]>([]);
     const navigate = useNavigate()
 
-    if (props.token === '') {
+    if (!localStorage.getItem("token")) {
         return <Navigate to="/login" />
     }
 
     const fetchData = async () => {
         const response = await axios.get(`http://localhost:8001/employee`, {
             headers: {
-                Authorization: 'Bearer ' + props.token
+                Authorization: 'Bearer ' + localStorage.getItem("token")
             }
         })
         setData(response.data)

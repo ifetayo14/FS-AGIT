@@ -3,15 +3,17 @@ import {Navigate, useParams} from "react-router-dom";
 import {IEmployee} from "../Types";
 import axios from "axios";
 import {replaceBehavior} from "@testing-library/user-event/dist/keyboard/plugins";
+import {useCookies} from "react-cookie";
 
-const EmployeeUpdate = (props: {token: string}) => {
+const EmployeeUpdate = () => {
     const [data, setData] = useState<IEmployee>();
     const params = useParams()
+    const [cookies] = useCookies(['token']);
 
     const fetchData = async () => {
         const response = await axios.get(`http://localhost:8001/employee/`+params.id, {
             headers: {
-                Authorization: 'Bearer ' + props.token
+                Authorization: 'Bearer ' + cookies
             }
         })
         setData(response.data)
@@ -34,7 +36,7 @@ const EmployeeUpdate = (props: {token: string}) => {
     const [email, setEmail] = useState(data?.email)
     const [redirect, setRedirect] = useState(false)
 
-    if (props.token === '') {
+    if (cookies === null) {
         return <Navigate to="/login" />
     }
 
@@ -46,7 +48,7 @@ const EmployeeUpdate = (props: {token: string}) => {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+ props.token
+                'Authorization': 'Bearer '+ cookies
             },
             body: JSON.stringify({
                 'name': name,
